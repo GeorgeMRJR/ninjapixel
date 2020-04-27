@@ -1,10 +1,14 @@
 *** Settings ***
-Documentation       Login
-...     Sendo um administrador de catálogo
-...     Quero me autenticar no sistema
-...     Para que eu possa gerenciar o catálogo de produtos
+Documentation    Login
+...              Sendo um administrador de catálogo
+...              Quero me autenticar no sistema
+...              Para que eu possa gerenciar o catálogo de produtos
 
-Library     SeleniumLibrary
+Resource    ../resources/actions.robot
+
+Test Setup       BasePage.Open
+Test Teardown    BasePage.Close
+
 
 # Lego (peças e vc usa a criativade para montar o que vc quiser)
 
@@ -15,28 +19,26 @@ Login com sucesso
     Entao devo ser autenticado
 
 Senha incorreta
-    Dado que eu acesso a página de login
-    Quando eu submeto minhas credenciais com senha incorreta
-    Entao devo ver uma mensagem de alerta "Usuário e/ou senha inválidos"
+    [Template]               Tentativa de login
+    papito@ninjapixel.com    abc123                Usuário e/ou senha inválidos
+Email não existe
+    [Template]            Tentativa de login
+    xxx@ninjapixel.com    abc123                Usuário e/ou senha inválidos
+
+Email Obrigatorio
+    [Template]    Tentativa de login
+    ${EMPTY}      abc123                Opps. Informe o seu email!
+
+Senha Obrigatoria
+    [Template]               Tentativa de login
+    papito@ninjapixel.com    ${EMPTY}              Opps. Informe a sua senha!
 
 *** Keywords ***
-Dado que eu acesso a página de login
-    Open Browser    http://pixel-web:3000/login     chrome
+Tentativa de login
+    [Arguments]    ${email}    ${pass}    ${saida}
 
-Quando eu submeto minhas credenciais "${email}" e "${pass}"
-    Input Text      id:emailId      ${email}
-    Input Text      id:passId       ${pass}
-    Click Element   class:btn
+    Dado que eu acesso a página de login
+    Quando eu submeto minhas credenciais "${email}" e "${pass}"
+    Entao devo ver uma mensagem de alerta "${saida}"
 
-Entao devo ser autenticado
-    Wait Until Page Contains    Papito
-    Close Browser
 
-Quando eu submeto minhas credenciais com senha incorreta
-    Input Text      id:emailId      teste
-    Input Text      id:passId       teste
-    Click Element   class:btn
-
-Entao devo ver uma mensagem de alerta "Usuário e/ou senha inválidos"
-    Wait Until Page Contains    Usuário e/ou senha inválidos
-    Close Browser
