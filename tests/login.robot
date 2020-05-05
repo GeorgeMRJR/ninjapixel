@@ -6,14 +6,14 @@ Documentation    Login
 
 Resource    ../resources/actions.robot
 
-Test Setup       BasePage.Open
-Test Teardown    BasePage.Close
+Test Teardown    Close Session
 
 
 # Lego (peças e vc usa a criativade para montar o que vc quiser)
 
 *** Test Cases ***
 Login com sucesso
+    [Tags]      login
     Dado que eu acesso a página de login
     Quando eu submeto minhas credenciais "papito@ninjapixel.com" e "pwd123"
     Entao devo ser autenticado
